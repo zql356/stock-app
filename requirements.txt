@@ -1,0 +1,4 @@
+# 智能选股APP Python依赖
+# 生产环境用 Gunicorn + Flask
+Flask==3.0.3
+gunicorn==22.0.0

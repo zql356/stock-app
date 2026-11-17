@@ -1,0 +1,28 @@
+# Render.com 免费部署配置
+# 用法：把项目推到 GitHub 后，在 Render 选 Blueprint 模式，会自动读取本文件
+# 或手动创建 Web Service 时参考这里的配置
+
+services:
+  - type: web
+    name: stock-app
+    runtime: python
+    plan: free
+    region: singapore          # 新加坡节点，离国内最近，访问东财API较快
+    branch: main
+    buildCommand: pip install --upgrade pip && pip install -r requirements.txt
+    # 免费层512MB内存：1个worker + 4线程，比多worker更省内存且能并发
+    startCommand: gunicorn app:app --bind 0.0.0.0:$PORT --timeout 300 --workers 1 --threads 4 --access-logfile -
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.9
+      - key: PYTHONUNBUFFERED
+        value: "1"
+      - key: TZ
+        value: Asia/Shanghai
+      # 免费层资源有限，扫描样本降到70支（本地默认150支）
+      - key: SCAN_COUNT
+        value: "70"
+      - key: MAX_PRICE
+        value: "40"
